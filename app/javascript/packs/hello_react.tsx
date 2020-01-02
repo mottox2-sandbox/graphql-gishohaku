@@ -2,20 +2,84 @@
 // like app/views/layouts/application.html.erb. All it does is render <div>Hello React</div> at the bottom
 // of the page.
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
+import ggl from 'graphql-tag'
 
-const Hello = props => (
-  <div>Hello {props.name}!</div>
-)
+import client from './client'
 
-Hello.defaultProps = {
-  name: 'David'
+type Circles = {
+  edges: {
+    node: {
+      id: string
+      name: string
+      booth: string
+      books: {
+        title: string
+        description: string
+      }[]
+    }
+  }[]
+}
+
+type CirclesResponse = {
+  circles: Circles
+}
+
+const App = ()=> {
+  const [circles, setCircles] = useState<Circles>()
+
+  useEffect(() => {
+    client.query<CirclesResponse>({
+      query: ggl`
+        query getCircles {
+          circles {
+            edges {
+              node {
+                id
+                name
+                booth
+                books {
+                  title
+                  description
+                }
+              }
+            }
+          }
+        }
+      `
+    })
+      .then(({data}) => {
+        console.log(data)
+        setCircles(data.circles)
+       })
+      .catch(error => console.error(error))
+  }, [])
+
+  return <div>
+    {circles &&
+      <>
+        {
+          circles.edges.map((edge, index) => {
+            const circle = edge.node
+            return <div key={index}>
+              <h2>{circle.name}</h2>
+              <small>
+                {circle.books.map(book => {
+                  return <p>{book.title}</p>
+                })}
+              </small>
+            </div>
+          })
+        }
+      </>
+    }
+  </div>
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Hello name="React" />,
+    <App />,
     document.body.appendChild(document.createElement('div')),
   )
 })
