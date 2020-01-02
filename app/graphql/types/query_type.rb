@@ -9,5 +9,9 @@ module Types
     def test_field
       "Hello World!"
     end
+
+    field :circles, Types::CircleType.connection_type, null: false, resolve: -> (_object, _args, _context) do
+      Circle.order(id: :desc)
+    end
   end
 end
