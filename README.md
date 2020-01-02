@@ -1,24 +1,19 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Demo Application for GraphQL API.
 
-Things you may want to cover:
+## Setup
+```bash
+$ docker-compose up db
+$ bin/rails db:create db:migrate db:seed
+$ bin/rails s
+```
 
-* Ruby version
+## Tips
+```bash
+# Create GraphQL type
+$ bin/rails g graphql:object Book title:String! description:String cirlce:Circle! price:Int pages:Int event:[Event]
 
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# Check GraphQL schema
+$ bin/rails r 'puts GraphqlGishohakuSchema.to_definition'
+```
