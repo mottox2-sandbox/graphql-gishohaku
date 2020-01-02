@@ -1,0 +1,2 @@
+class CircleCategory < ApplicationRecord
+end
